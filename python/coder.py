@@ -1,4 +1,5 @@
 import re
+from magicblueshell import MagicBlueShell
 def encode(msg, color, nbBits):
     #msg: String
     #color: [RR,GG,BB]
@@ -48,6 +49,7 @@ def decode(byteArray, nbBits):
 if __name__ == '__main__':
     print(decode(encode("Skynet is Alive !", [255,255,255], 4), 4))
     array_byte = encode("Coucou", [255, 255, 255], 4)
-
-
+    magic = MagicBlueShell()
+    mac_addr = 'f8:1d:78:63:0c:ff'
+    magic.cmd_connect(mac_addr)
 

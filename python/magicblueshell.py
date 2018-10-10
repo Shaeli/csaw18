@@ -40,7 +40,7 @@ class MagicBlueShell:
             self.params = params or []
             self.aliases = aliases or []
             self.opt_params = opt_params or []
-    def __init__(self, bluetooth_adapter=hci0, bulb_version=7):
+    def __init__(self, bluetooth_adapter='hci0', bulb_version=7):
         # List available commands and their usage. 'con_required' define if
         # we need to be connected to a device for the command to run
         self.available_cmds = [
@@ -168,7 +168,9 @@ class MagicBlueShell:
                 return False
         else:
             addr_type = "public"
-            mac_address = args[0]
+            print(args)
+            mac_address = args
+            # j'ai casse le code, utiliser agrs[0] si toi vouloir shell
         magic_blue = MagicBlue(mac_address,
                                version=bulb_version,
                                addr_type=addr_type)
@@ -229,6 +231,7 @@ class MagicBlueShell:
     # Send only hexa string for now please (as there is no error tests yet)
     def cmd_send_specific_packet(self, args):
         packet = args[0]
+        #si toi utiliser shell, met [0] aprs "args" sinon marche pas
         [b.send_packet(packet) for b in self._bulbs]
 
     def cmd_set_warm_light(self, *args):
