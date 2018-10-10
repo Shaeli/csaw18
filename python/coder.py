@@ -47,5 +47,7 @@ def decode(byteArray, nbBits):
 
 if __name__ == '__main__':
     print(decode(encode("Skynet is Alive !", [255,255,255], 4), 4))
+    array_byte = encode("Coucou", [255, 255, 255], 4)
+
 
 
