@@ -1,5 +1,5 @@
 import re
-from magicblueshell import MagicBlueShell
+#from magicblueshell import MagicBlueShell
 def encode(msg, color, nbBits):
     #msg: String
     #color: [RR,GG,BB]
@@ -7,7 +7,7 @@ def encode(msg, color, nbBits):
 
     msg += '\x04'
     msgBinaryStr = ''.join('{0:08b}'.format(ord(x), 'b') for x in msg)
-    payloadByteArray = []
+    colorsArray = []
     mask = 256 - pow(2, nbBits)
 
     while (len(msgBinaryStr) % nbBits != 0):
@@ -18,15 +18,24 @@ def encode(msg, color, nbBits):
         data = int(msgBinaryStr[0:nbBits], 2)
         msgBinaryStr = msgBinaryStr [nbBits:]
         if (i % 3 == 0):
-            payloadByteArray.append([])
-        payloadByteArray[i // 3].append((color[i % 3] & mask) + data)
+            colorsArray.append([])
+        colorsArray[i // 3].append((color[i % 3] & mask) + data)
         i += 1
 
     while (i % 3 != 0):
-        payloadByteArray[i // 3].append(color[i % 3])
+        colorsArray[i // 3].append(color[i % 3])
         i += 1
 
-    return payloadByteArray
+    return colorsArray
+
+def colorArrayToBulbCommands(colorsArray):
+    commands = []
+    for color in colorsArray:
+        red = "%x" % color[0]
+        green = "%x" % color[1]
+        blue = "%x" % color[2]
+        commands.append("56" + red + green + blue + "00f0aa")
+    return commands
 
 def decode(byteArray, nbBits):
     # byteArray: [[RR,GG,BB],...]
@@ -48,6 +57,7 @@ def decode(byteArray, nbBits):
 
 if __name__ == '__main__':
     print(decode(encode("Skynet is Alive !", [255,255,255], 4), 4))
+    print(colorArrayToBulbCommands(encode("Skynet is Alive !", [255,255,255],4)))
     array_byte = encode("Coucou", [255, 255, 255], 4)
     magic = MagicBlueShell()
     mac_addr = 'f8:1d:78:63:0c:ff'

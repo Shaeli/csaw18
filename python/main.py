@@ -7,4 +7,3 @@ def exctractPayloadFromPcap(pcap, nbBits):
     return payload
 
 print(exctractPayloadFromPcap('white.pcap', 4))
-
