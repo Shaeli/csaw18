@@ -41,10 +41,11 @@ def decode(byteArray, nbBits):
                 current_bin = "0" + current_bin
             bin_text = bin_text + current_bin
     result = "".join(chr(int(bin_text[i:i+8], 2)) for i in range(0, len(bin_text),8))
+    str = re.match("(.*)\\x04",result)
 
-    return re.match("(.*)\\x04",result).group(1)
+    return str.group(1) if str else result
 
-
-print(decode(encode("Skynet is Alive !", [255,255,255], 4), 4))
+if __name__ == '__main__':
+    print(decode(encode("Skynet is Alive !", [255,255,255], 4), 4))
 
 
