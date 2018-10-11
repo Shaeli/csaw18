@@ -25,7 +25,7 @@
 * [Web Bluetooth API (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Bluetooth_API)
 * [Interact with Bluetooth devices on the Web](https://developers.google.com/web/updates/2015/07/interact-with-ble-devices-on-the-web)
 * [An introduction to the Web Bluetooth API](https://dev.opera.com/articles/web-bluetooth-intro/)
-* [Bluetooth internals chrome page](chrome://bluetooth-internals/)
+* Bluetooth internals chrome page: chrome://bluetooth-internals/
 #### Python API
 * [Magicblue](https://github.com/Betree/magicblue)
 #### Sniffer
