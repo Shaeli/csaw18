@@ -42,15 +42,12 @@ def colorArrayToBulbCommands(colorsArray):
     return commands
 
 if __name__ == '__main__':
-    a = crypto.str_xor("toto", crypto.hashkey("key"))
-    print(a)
-    print(crypto.str_xor(a, crypto.hashkey("key")))
-    """bulb_commands = colorArrayToBulbCommands(encode("Coucou", [255, 255, 255], 4))
+    bulb_commands = colorArrayToBulbCommands(encode("Coucou", [255, 255, 255], 4))
     magic = MagicBlueShell()
     mac_addr = ['f8:1d:78:63:0c:ff']
     magic.cmd_connect(mac_addr)
     for i in bulb_commands:
-        magic.cmd_send_specific_packet([i])"""
+        magic.cmd_send_specific_packet([i])
         #time.sleep(1) After some tests, it looks like it's not necessary... w/s
 
     #Eleonore's tests

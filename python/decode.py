@@ -1,6 +1,7 @@
 import re
 from scapy.all import *
 from scapy.layers.bluetooth import *
+import crypto
 
 def decode(byteArray, nbBits):
     # byteArray: [[RR,GG,BB],...]
@@ -37,4 +38,7 @@ def extractByteArrayFromPcap(pcap):
     return byteArray
 
 if __name__ == '__main__':
-    print(decode(extractByteArrayFromPcap('white.pcap'), 4))
+    decoded = decode(extractByteArrayFromPcap('white.pcap'), 4)
+    decrypted = crypto.str_xor(decoded, "cookie")
+    print(decrypted)
+
