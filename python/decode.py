@@ -39,6 +39,6 @@ def extractByteArrayFromPcap(pcap):
 
 if __name__ == '__main__':
     decoded = decode(extractByteArrayFromPcap('white.pcap'), 4)
-    decrypted = crypto.str_xor(decoded, "cookie")
+    decrypted = crypto.str_xor_decode(decoded, crypto.hashkey("bonjour"))
     print(decrypted)
 

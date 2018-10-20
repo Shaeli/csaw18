@@ -8,8 +8,9 @@ def hashkey(key):
 
 def str_xor_encode(msg, key):
     encoded = "".join([chr(ord(m) ^ k) for (m,k) in zip(msg, key)])
-    return base64.b64encode(encoded.encode())
+    print(encoded)
+    return base64.b64encode(encoded.encode('iso-8859-1'))
 
 def str_xor_decode(b64msg, key):
-    msg = base64.b64decode(b64msg).decode()
+    msg = base64.b64decode(b64msg).decode('iso-8859-1')
     return "".join([chr(ord(m) ^ k) for (m,k) in zip(msg, key)])
