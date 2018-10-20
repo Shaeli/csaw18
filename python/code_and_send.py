@@ -42,8 +42,10 @@ def colorArrayToBulbCommands(colorsArray):
     return commands
 
 if __name__ == '__main__':
-    #print(crypto.hashkey('bonjour'))
-    print(crypto.str_xor_encode("Mapple Cookie", crypto.hashkey('bonjour')))
+    print(crypto.hashkey('bonjour'))
+    a = crypto.str_xor_encode("bonjour", crypto.hashkey('bonjour'))
+    print(a)
+    print(crypto.str_xor_decode(a, crypto.hashkey('bonjour')))
     """bulb_commands = colorArrayToBulbCommands(encode("Coucou", [255, 255, 255], 4))
     magic = MagicBlueShell()
     mac_addr = ['f8:1d:78:63:0c:ff']

@@ -7,9 +7,9 @@ def hashkey(key):
     return codecs.decode(h,"hex")
 
 def str_xor_encode(msg, key):
-    encoded = "".join([chr(ord(m) ^ ord(k)) for (m,k) in zip(msg, key)])
+    encoded = "".join([chr(ord(m) ^ k) for (m,k) in zip(msg, key)])
     return base64.b64encode(encoded.encode())
 
 def str_xor_decode(b64msg, key):
-    decoded = base64.b64decode(b64msg).decode()
-    return "".join([chr(ord(m) ^ ord(k)) for (m,k) in zip(msg, key)])
+    msg = base64.b64decode(b64msg).decode()
+    return "".join([chr(ord(m) ^ k) for (m,k) in zip(msg, key)])
