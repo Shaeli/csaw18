@@ -1,4 +1,5 @@
 import re
+from pcap import *
 #from magicblueshell import MagicBlueShell
 import time
 import hashlib
@@ -54,4 +55,3 @@ if __name__ == '__main__':
         magic.cmd_send_specific_packet(['56ff000000f0aa'])
         magic.cmd_send_specific_packet(['5600ff0000f0aa'])
         magic.cmd_send_specific_packet(['560000ff00f0aa'])"""
-
