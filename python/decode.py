@@ -25,8 +25,6 @@ def extractByteArrayFromPcap(pcap):
     packets = rdpcap(pcap)
     byteArray = []
     for pkt in packets:
-        pkt = L2CAP_Hdr(pkt)
-        print(pkt.show())
         if pkt.haslayer('Write Request'):
             color = re.search(b'\x56(.)(.)(.)\x00\xf0\xaa', pkt['Write Request'].data)
             if color:
@@ -38,7 +36,9 @@ def extractByteArrayFromPcap(pcap):
     return byteArray
 
 if __name__ == '__main__':
-    decoded = decode(extractByteArrayFromPcap('white.pcap'), 4)
-    decrypted = crypto.str_xor_decode(decoded, crypto.hashkey("bonjour"))
+    f = input('Path to the file you want to decode?\n')
+    key = input('What is the XOR key?\n')
+    decoded = decode(extractByteArrayFromPcap(f), 4)
+    decrypted = crypto.str_xor_decode(decoded, crypto.hashkey(key))
     print(decrypted)
 

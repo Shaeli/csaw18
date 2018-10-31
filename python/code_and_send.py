@@ -1,5 +1,5 @@
 import re
-#from magicblueshell import MagicBlueShell
+from magicblueshell import MagicBlueShell
 import time
 import hashlib
 import crypto
@@ -9,7 +9,7 @@ def encode(msg, color, nbBits):
     #color: [RR,GG,BB]
     #nbBits: interger c [1,8]
 
-    msg += '\x04'
+    msg = msg.decode('utf-8') + '\x04'
     msgBinaryStr = ''.join('{0:08b}'.format(ord(x), 'b') for x in msg)
     colorsArray = []
     mask = 256 - pow(2, nbBits)
@@ -42,15 +42,21 @@ def colorArrayToBulbCommands(colorsArray):
     return commands
 
 if __name__ == '__main__':
-    bulb_commands = colorArrayToBulbCommands(encode("Coucou", [255, 255, 255], 4))
+    key = input('please enter your XOR key\n')
+    message = input('please enter the message that you need to send\n')
+    mess = crypto.str_xor_encode(message, crypto.hashkey(key))
+    base_color = input('please enter the base color (example: "255 255 255"for white)\n')
+    base_c = [ int(n) for n in base_color.split()]
+    bulb_commands = colorArrayToBulbCommands(encode(mess, base_c, 4))
     magic = MagicBlueShell()
-    mac_addr = ['f8:1d:78:63:0c:ff']
+    mac_addr = ['f8:1d:78:63:50:78']
     magic.cmd_connect(mac_addr)
     for i in bulb_commands:
         magic.cmd_send_specific_packet([i])
         #time.sleep(1) After some tests, it looks like it's not necessary... w/s
     #Eleonore's tests
-    """for i in range(40):
+    """
+    for i in range(40):
         magic.cmd_send_specific_packet(['56ff000000f0aa'])
         magic.cmd_send_specific_packet(['5600ff0000f0aa'])
         magic.cmd_send_specific_packet(['560000ff00f0aa'])"""
