@@ -36,12 +36,17 @@ def extractByteArrayFromPcap(pcap):
                     int.from_bytes(color.group(3), 'big')])
 
     return byteArray
+def check_correct_nb_bit(value):
+    value = int(value)
+    if value < 1 or value > 8:
+        raise argparse.ArgumentTypeError('nbbit value is: {} and should be between 1 and 8'.format(value))
+    return value
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Decoding a bluetooth hidden message')
     parser.add_argument('--file', help='The file that contains the bluetooth trafic capture', required=True)
     parser.add_argument('--key', help='The XOR key used to crypt data', default='themaplecookiearmy')
-    parser.add_argument('--nbbit', help='How many less significants bits we used to hide data. Value between 1 and 8.', default=4)
+    parser.add_argument('--nbbit', help='How many less significants bits we used to hide data. Value between 1 and 8.', default=4, type=check_correct_nb_bit)
     args = parser.parse_args()
     decoded = decode(extractByteArrayFromPcap(args.file), args.nbbit)
     decrypted = crypto.str_xor_decode(decoded, crypto.hashkey(args.key))

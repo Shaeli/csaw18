@@ -43,14 +43,28 @@ def colorArrayToBulbCommands(colorsArray):
         commands.append("56" + red + green + blue + "00f0aa")
     return commands
 
+def check_correct_nb_bit(value):
+    value = int(value)
+    if value < 1 or value > 8:
+        raise argparse.ArgumentTypeError("nbbit value is: {} and should be between 1 and 8.".format(value))
+    return value
+
+def check_basecolor(value):
+    if len(value.split()) != 3:
+        raise argparse.ArgumentTypeError('Base color should be composed by 3 integer (RGB format). Example: "--basecolor "125 125 125"". Do not forget the quotes.')
+    for n in value.split():
+        if int(n) < 1 or int(n) > 255:
+            raise argparse.ArgumentTypeError("Base color value is: {} should be between 1 and 255".format(n))
+    return value
+    
 if __name__ == '__main__':
 
     # Parse arguments
     parser = argparse.ArgumentParser(description='Sending a crafted bluetooth packet with hidden data')
     parser.add_argument('--key', help='the XOR key to use to crypt data',default='themaplecookiearmy')
-    parser.add_argument('--nbbit', help='How many less significants bits we can use to hide data. Value should be between 1 and 8.', default=4)
+    parser.add_argument('--nbbit', help='How many less significants bits we can use to hide data. Value should be between 1 and 8.', default=4, type=check_correct_nb_bit)
     parser.add_argument('--message', help='The message you want to transmit, use "" to enter a string.(Example: --message "My message".', required= True)
-    parser.add_argument('--basecolor', help='The base color from which we code our data, please send 3 integer between 1 and 255 and use ""("RED GREEN BLUE" FORMAT). Example: --basecolor "145 18 154".', default="255 255 255")
+    parser.add_argument('--basecolor', help='The base color from which we code our data, please send 3 integer between 1 and 255 and use ""("RED GREEN BLUE" FORMAT). Example: --basecolor "145 18 154".', default="255 255 255", type=check_basecolor)
     args = parser.parse_args()
 
     # Prepare packets
