@@ -1,7 +1,9 @@
+#!/usr/bin/python3
 import re
 from scapy.all import *
 from scapy.layers.bluetooth import *
 import crypto
+import argparse
 
 def decode(byteArray, nbBits):
     # byteArray: [[RR,GG,BB],...]
@@ -36,9 +38,12 @@ def extractByteArrayFromPcap(pcap):
     return byteArray
 
 if __name__ == '__main__':
-    f = input('Path to the file you want to decode?\n')
-    key = input('What is the XOR key?\n')
-    decoded = decode(extractByteArrayFromPcap(f), 4)
-    decrypted = crypto.str_xor_decode(decoded, crypto.hashkey(key))
+    parser = argparse.ArgumentParser(description='Decoding a bluetooth hidden message')
+    parser.add_argument('--file', help='The file that contains the bluetooth trafic capture', required=True)
+    parser.add_argument('--key', help='The XOR key used to crypt data', default='themaplecookiearmy')
+    parser.add_argument('--nbbit', help='How many less significants bits we used to hide data. Value between 1 and 8.', default=4)
+    args = parser.parse_args()
+    decoded = decode(extractByteArrayFromPcap(args.file), args.nbbit)
+    decrypted = crypto.str_xor_decode(decoded, crypto.hashkey(args.key))
     print(decrypted)
 

@@ -1,8 +1,10 @@
+#!/usr/bin/python3
 import re
 from magicblueshell import MagicBlueShell
 import time
 import hashlib
 import crypto
+import argparse
 
 def encode(msg, color, nbBits):
     #msg: String
@@ -42,21 +44,24 @@ def colorArrayToBulbCommands(colorsArray):
     return commands
 
 if __name__ == '__main__':
-    key = input('please enter your XOR key\n')
-    message = input('please enter the message that you need to send\n')
-    mess = crypto.str_xor_encode(message, crypto.hashkey(key))
-    base_color = input('please enter the base color (example: "255 255 255"for white)\n')
-    base_c = [ int(n) for n in base_color.split()]
-    bulb_commands = colorArrayToBulbCommands(encode(mess, base_c, 4))
+
+    # Parse arguments
+    parser = argparse.ArgumentParser(description='Sending a crafted bluetooth packet with hidden data')
+    parser.add_argument('--key', help='the XOR key to use to crypt data',default='themaplecookiearmy')
+    parser.add_argument('--nbbit', help='How many less significants bits we can use to hide data. Value should be between 1 and 8.', default=4)
+    parser.add_argument('--message', help='The message you want to transmit, use "" to enter a string.(Example: --message "My message".', required= True)
+    parser.add_argument('--basecolor', help='The base color from which we code our data, please send 3 integer between 1 and 255 and use ""("RED GREEN BLUE" FORMAT). Example: --basecolor "145 18 154".', default="255 255 255")
+    args = parser.parse_args()
+
+    # Prepare packets
+    mess = crypto.str_xor_encode(args.message, crypto.hashkey(args.key))
+    base_c = [ int(n) for n in args.basecolor.split()]
+    bulb_commands = colorArrayToBulbCommands(encode(mess, base_c, args.nbbit))
+    # Connect to the bulb
     magic = MagicBlueShell()
     mac_addr = ['f8:1d:78:63:50:78']
     magic.cmd_connect(mac_addr)
+
+    # Send prepared packets 
     for i in bulb_commands:
         magic.cmd_send_specific_packet([i])
-        #time.sleep(1) After some tests, it looks like it's not necessary... w/s
-    #Eleonore's tests
-    """
-    for i in range(40):
-        magic.cmd_send_specific_packet(['56ff000000f0aa'])
-        magic.cmd_send_specific_packet(['5600ff0000f0aa'])
-        magic.cmd_send_specific_packet(['560000ff00f0aa'])"""
