@@ -37,9 +37,9 @@ def encode(msg, color, nbBits):
 def colorArrayToBulbCommands(colorsArray):
     commands = []
     for color in colorsArray:
-        red = "%x" % color[0]
-        green = "%x" % color[1]
-        blue = "%x" % color[2]
+        red = format(color[0], '02x')
+        green = format(color[1], '02x')
+        blue = format(color[2], '02x')
         commands.append("56" + red + green + blue + "00f0aa")
     return commands
 
