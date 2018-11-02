@@ -3,8 +3,9 @@
 # =============================================================================
 # title           : magicbluelib.py
 # description     : Python library to control Magic Blue bulbs over Bluetooth
-# author          : Benjamin Piouffle
-# date            : 23/11/2015
+# source author   : Benjamin Piouffle
+# Modified by     : Eleonore Carpentier
+# date            : 02/10/2018
 # python_version  : 3.4
 # =============================================================================
 import functools

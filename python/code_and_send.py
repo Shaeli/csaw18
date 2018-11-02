@@ -65,6 +65,7 @@ if __name__ == '__main__':
     parser.add_argument('--nbbit', help='How many less significants bits we can use to hide data. Value should be between 1 and 8.', default=4, type=check_correct_nb_bit)
     parser.add_argument('--message', help='The message you want to transmit, use "" to enter a string.(Example: --message "My message".', required= True)
     parser.add_argument('--basecolor', help='The base color from which we code our data, please send 3 integer between 1 and 255 and use ""("RED GREEN BLUE" FORMAT). Example: --basecolor "145 18 154".', default="255 255 255", type=check_basecolor)
+    parser.add_argument('--bulb_macaddr', help='To which bulb we send data. Example : "--bulb_macaddr f8:1d:78:63:0c:ff"', required=True)
     args = parser.parse_args()
 
     # Prepare packets
@@ -73,9 +74,9 @@ if __name__ == '__main__':
     bulb_commands = colorArrayToBulbCommands(encode(mess, base_c, args.nbbit))
     # Connect to the bulb
     magic = MagicBlueShell()
-    mac_addr = ['f8:1d:78:63:50:78']
-    magic.cmd_connect(mac_addr)
+    magic.cmd_connect([args.bulb_macaddr])
 
     # Send prepared packets 
     for i in bulb_commands:
         magic.cmd_send_specific_packet([i])
+    print('Done.')

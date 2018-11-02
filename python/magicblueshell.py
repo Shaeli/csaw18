@@ -3,8 +3,9 @@
 # =============================================================================
 # title           : magicblueshell.py
 # description     : Python tool to control Magic Blue bulbs over Bluetooth
-# author          : Benjamin Piouffle
-# date            : 23/11/2015
+# source author   : Benjamin Piouffle
+# modified by     : Eleonore Carpentier
+# date            : 02/10/2018
 # usage           : python magicblue.py
 # python_version  : 3.4
 # =============================================================================
