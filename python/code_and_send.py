@@ -53,8 +53,8 @@ def check_basecolor(value):
     if len(value.split()) != 3:
         raise argparse.ArgumentTypeError('Base color should be composed by 3 integer (RGB format). Example: "--basecolor "125 125 125"". Do not forget the quotes.')
     for n in value.split():
-        if int(n) < 1 or int(n) > 255:
-            raise argparse.ArgumentTypeError("Base color value is: {} should be between 1 and 255".format(n))
+        if int(n) < 0 or int(n) > 255:
+            raise argparse.ArgumentTypeError("Base color value is: {} should be between 0 and 255".format(n))
     return value
     
 if __name__ == '__main__':
