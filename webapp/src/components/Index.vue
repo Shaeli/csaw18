@@ -1,25 +1,35 @@
 <template>
-  <div v-if="device !== null" id="connect" @click="bleConnect">
+  <div v-if="device === null" id="connect" @click="bleConnect">
     <font-awesome-icon :icon="['fab', 'bluetooth-b']" v-if="!requestBLEDevice"/>
     <font-awesome-icon :icon="['fal','spinner-third']" v-else spin/>
     <p>Click to connect.</p>
   </div>
   <div v-else id="control">
-    <!--<p><font-awesome-icon :icon="['fal', 'lightbulb']"/>{{device !== null ? device.name : 'Bulb'}}</p>-->
-    <ul id="payload_visualizer"><li  v-for="(color,index) in payload" v-bind:key="index" :style="`background: rgb(${color[0]},${color[1]},${color[2]})`"></li></ul>
-    <div id="payload_input">
-      <input placeholder="Payload" @focus="inputFocusEffect = true" @blur="inputFocusEffect = false" v-model="usrInput" id="payload" :class="{'input_focus_effect': inputFocusEffect}"/>
-      <button @click="sendPayload" :class="{'input_focus_effect': inputFocusEffect}"><font-awesome-icon :icon="['fas', 'bolt']"/></button>
+    <div id="control_wrapper" v-if="!sending">
+      <ul id="payload_visualizer"><li  v-for="(color,index) in payload" v-bind:key="index" :style="`background: rgb(${color[0]},${color[1]},${color[2]})`"></li></ul>
+      <div id="payload_input">
+        <input placeholder="Payload" @focus="inputFocusEffect = true" @blur="inputFocusEffect = false" v-model="usrInput" id="payload" :class="{'input_focus_effect': inputFocusEffect}"/>
+        <button @click="sendPayload" :class="{'input_focus_effect': inputFocusEffect}"><font-awesome-icon :icon="['fas', 'bolt']"/></button>
+      </div>
+      <div id="settings">
+        <h2>Settings <font-awesome-icon :icon="['fas', 'cog']"/></h2>
+        <p>{{color}}, {{nbBits}}bits, {{sleep}}s delay, {{xorPasswd.length > 0 ? 'Xored' : 'Not Xored'}}</p>
+        <ul>
+          <li>
+            <el-input placeholder="Xor password" v-model="xorPasswd">
+                <font-awesome-icon slot="prefix" :icon="['fal','lock']" class="icon_lock"/>
+            </el-input>
+          </li>
+          <li><span>Base color</span><el-color-picker v-model="usrColor" size="mini"></el-color-picker></li>
+          <li><span>Bits</span><el-slider v-model="nbBits" :step="1" :min="1" :max="8" :format-tooltip="formatBitsToolTip"></el-slider></li>
+          <li><span>Delay</span><el-slider v-model="sleep" :step="1" :min="0" :max="10" :format-tooltip="formatSleepToolTip"></el-slider></li>
+        </ul>
+      </div>
     </div>
-    <div id="settings">
-      <p>Base color: {{color}}, {{nbBits}}bits, {{xorPasswd.length > 0 ? 'Xored' : 'Not Xored'}} <font-awesome-icon :icon="['fas', 'cog']"/></p>
-      <span>Base color:</span><el-color-picker v-model="usrColor" size="mini"></el-color-picker>
-      <span>LSB Bits to use:</span> <el-slider v-model="nbBits" :step="1" :min="1" :max="8" :format-tooltip="formatBitsToolTip"></el-slider>
-      <span>Xor Password:</span>
-      <el-input placeholder="Password" v-model="xorPasswd">
-        <font-awesome-icon slot="prefix" :icon="['fal','lock']"/>
-      </el-input>
-      <span>Sleep</span> <el-slider v-model="sleep" :step="0.5" :min="0" :max="5" :format-tooltip="formatSleepToolTip"></el-slider>
+    <div v-else id="sending_indicator">
+      <el-progress :percentage="Math.round(step / payload.length * 100)" :status="step == payload.length ? 'success' : ''"></el-progress>
+      <p v-if="step < payload.length">Sending command {{step + 1}} of {{payload.length}} - {{remainingTime}}s remaining</p>
+      <p v-else>Payload sent !</p>
     </div>
   </div>
 </template>
@@ -39,15 +49,14 @@ export default {
       usrColor: '#3A8EE6',
       xorPasswd: '',
       delay: 1,
-      sleep: 1
+      sleep: 1,
+      sending: false,
+      step: 0
     }
   },
   computed: {
     msg () {
       if (this.xorMsg.length > 0) {
-        console.log(this.xorMsg.length)
-        console.log(this.xorMsg)
-        console.log(btoa(this.xorMsg))
         return this.xorMsg + '\x04'
       } else {
         return 'Skynet is Alive\x04'
@@ -99,7 +108,10 @@ export default {
       } else {
         xoredString = this.usrInput
       }
-      return xoredString
+      return btoa(xoredString)
+    },
+    remainingTime () {
+      return (this.payload.length - this.step) * this.sleep
     }
   },
   methods: {
@@ -134,7 +146,6 @@ export default {
     },
     bleSendCommand: function (command) {
       let c = new Uint8Array(command.match(/.{1,2}/g).map(byte => parseInt(byte, 16)))
-      console.log(c)
       if (typeof this.device !== 'undefined') {
         return this.device.gatt.connect()
           .then(server => {
@@ -153,7 +164,8 @@ export default {
     },
     sendPayload: function () {
       let payload = this.payload
-      let that = this;
+      let that = this
+      this.sending = true;
       (async function loop () {
         for (let i = 0; i < payload.length; i++) {
           let command = `56${payload[i][0].toString(16)}${payload[i][1].toString(16)}${payload[i][2].toString(16)}00f0aa`
@@ -164,7 +176,12 @@ export default {
             console.log(error)
             break
           }
+          that.step += 1
         }
+        setTimeout(function () {
+          that.step = 0
+          that.sending = false
+        }, 3000)
       })()
     },
     xor: function (msg, pass) {
@@ -257,6 +274,27 @@ export default {
     overflow: hidden;
     animation: showSettings 0.5s ease-out;
     margin: 40px;
+    color: #4A4A4A;
+  }
+
+  #settings ul{
+    padding: 0px;
+  }
+
+  #settings li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+  }
+
+  #settings li .el-slider{
+    width: 80%;
+  }
+
+  #settings .icon_lock{
+    height: 100%;
+    padding: 0px 5px;
   }
 
   #payload_visualizer{
@@ -270,7 +308,7 @@ export default {
     margin-bottom: 20px;
   }
 
-  #payload_visualizer li{
+  #payload_visualizer li {
     flex: 1;
     height: 15vh;
   }
@@ -284,5 +322,11 @@ export default {
       margin-top: 40px;
       opacity: 1;
     }
+  }
+
+  #sending_indicator{
+    display: block;
+    width: 50vh;
+    height: 5vh;
   }
 </style>
