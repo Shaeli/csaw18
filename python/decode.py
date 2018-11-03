@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 import re
-from scapy.all import *
-from scapy.layers.bluetooth import *
 import crypto
 import argparse
 
@@ -24,18 +22,18 @@ def decode(byteArray, nbBits):
     return str.group(1) if str else result
 
 def extractByteArrayFromPcap(pcap):
+    f = open(pcap, 'rb')
     packets = rdpcap(pcap)
     byteArray = []
-    for pkt in packets:
-        if pkt.haslayer('Write Request'):
-            color = re.search(b'\x56(.)(.)(.)\x00\xf0\xaa', pkt['Write Request'].data)
-            if color:
-                byteArray.append([
-                    int.from_bytes(color.group(1), 'big'),
-                    int.from_bytes(color.group(2), 'big'),
-                    int.from_bytes(color.group(3), 'big')])
-
+    for pkt in f.readlines():
+        color = re.search(b'.\x56(.)(.)(.)\x00\xf0\xaa.*', pkt)
+        if color:
+            byteArray.append([
+                int.from_bytes(color.group(1), 'big'),
+                int.from_bytes(color.group(2), 'big'),
+                int.from_bytes(color.group(3), 'big')])
     return byteArray
+
 def check_correct_nb_bit(value):
     value = int(value)
     if value < 1 or value > 8:

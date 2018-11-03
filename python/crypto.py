@@ -4,7 +4,7 @@ import codecs
 
 def hashkey(key):
     h = hashlib.sha256(key.encode('utf-8')).hexdigest()
-    return codecs.decode(h,"hex")
+    return codecs.decode(h, "hex")
 
 def str_xor_encode(msg, key):
     encoded = ""
@@ -14,6 +14,7 @@ def str_xor_encode(msg, key):
 
 def str_xor_decode(b64msg, key):
     msg = base64.b64decode(b64msg).decode('iso-8859-1')
+    decoded = ""
     for i in range(0, len(msg)):
-        encoded += chr(ord(msg[i]) ^ key[i % len(key)])
-    return encoded
+        decoded += chr(ord(msg[i]) ^ key[i % len(key)])
+    return decoded
