@@ -2,9 +2,12 @@ import hashlib
 import base64
 import codecs
 
-def hashkey(key):
-    h = hashlib.sha256(key.encode('utf-8')).hexdigest()
-    return codecs.decode(h, "hex")
+def hashkey(key, qrcode):
+    if qrcode:
+        return key.encode()
+    else:
+        h = hashlib.sha256(key.encode('utf-8')).hexdigest()
+        return codecs.decode(h, "hex")
 
 def str_xor_encode(msg, key):
     encoded = ""
