@@ -69,7 +69,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Prepare packets
-    mess = crypto.str_xor_encode(args.message, crypto.hashkey(args.key))
+    mess = crypto.str_xor_encode(args.message, crypto.hashkey(args.key, False))
     base_c = [ int(n) for n in args.basecolor.split()]
     bulb_commands = colorArrayToBulbCommands(encode(mess, base_c, args.nbbit))
     # Connect to the bulb

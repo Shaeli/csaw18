@@ -46,7 +46,6 @@ if __name__ == '__main__':
     parser.add_argument('--nbbit', help='How many less significants bits we used to hide data. Value between 1 and 8.', default=4, type=check_correct_nb_bit)
     parser.add_argument('--qrcode', action='store_true')
     args = parser.parse_args()
-    print(args.qrcode)
     decoded = decode(extractByteArrayFromPcap(args.file), args.nbbit)
     decrypted = crypto.str_xor_decode(decoded, crypto.hashkey(args.key, args.qrcode))
     print(decrypted)

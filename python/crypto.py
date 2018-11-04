@@ -2,7 +2,7 @@ import hashlib
 import base64
 import codecs
 
-def hashkey(key, qrcode):
+def hashkey(key, qrcode=False):
     if qrcode:
         return key.encode()
     else:
