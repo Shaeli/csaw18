@@ -1,8 +1,9 @@
 # CSAW'18: The Maple Cookie Army github
 **Maple Cookie Army for the win !**
 
+[Winners](https://csaw.engineering.nyu.edu/esc/csaw18-winners)
 
-### Subjet
+### Sujet
 >*Lean Enterprise Advanced Knowledge Solutions (LEAKS) is a private technology company that gets awarded most of the defense and military contracts of the country of IoTilandia. Given the sensitive nature of its contracts, LEAKS employs **a complete air-gap separation** for all its internal networks, ensuring no data is leaked through public connections.*
 
 >*A recent presidential order requires that all IoTilandia companies, including LEAKS, "IoTize" [sic] their infrastructure by making everything smarter; coffee makers, fridges, chairs, and light bulbs. To abide to this presidential order, LEAKS has installed sophisticated smart light bulbs in their offices and connected them to their internal network.*

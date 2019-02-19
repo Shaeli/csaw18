@@ -1,0 +1,56 @@
+<html>
+    <input type="text" placeholder="payload" id="a"/>
+    <input type="text" placeholder="xor password" id="p"/>
+    <button onclick="send()">Send !</button>
+    <script>
+        function send(){
+            let msgBinaryStr = btoa(xor(document.getElementById('a').value, document.getElementById('p').value))
+                .split('')
+                .map((char) => '00'.concat(char.charCodeAt(0).toString(2)).slice(-8))
+                .join('')
+            let payloadColorsArray = []
+            let color = [255,255,255]
+            let nbBits = 4
+            let mask = 256 - Math.pow(2, nbBits)
+            let i = 0
+            for (i; msgBinaryStr.length > 0; i++) {
+                let data = parseInt(msgBinaryStr.slice(0, nbBits), 2)
+                msgBinaryStr = msgBinaryStr.substr(nbBits)
+                if (i % 3 === 0) {
+                payloadColorsArray.push([])
+                }
+                payloadColorsArray[Math.floor(i / 3)].push((color[i % 3] & mask) + data)
+            }
+            for (i; i % 3 !== 0; i++) {
+                payloadColorsArray[Math.floor(i / 3)].push(color[i % 3])
+            }
+            connectAndSend(payloadColorsArray)
+        }
+        function connectAndSend(payload){
+            navigator.bluetooth.requestDevice({filters: [{services: ['0000ffe5-0000-1000-8000-00805f9b34fb']}]})
+            .then(device => {
+                return device.gatt.connect()
+            }).then(server => {
+                return server.getPrimaryService('0000ffe5-0000-1000-8000-00805f9b34fb')
+            }).then(service => {
+                return service.getCharacteristic('0000ffe9-0000-1000-8000-00805f9b34fb')
+            }).then(characteristic => {
+                (async function loop () {
+                    for (let i = 0; i < payload.length; i++) {
+                        let command = `56${payload[i][0].toString(16)}${payload[i][1].toString(16)}${payload[i][2].toString(16)}00f0aa`
+                        let c = new Uint8Array(command.match(/.{1,2}/g).map(byte => parseInt(byte, 16)))
+                        await characteristic.writeValue(c)
+                        await new Promise(resolve => setTimeout(resolve, 1000))
+                    }
+                })()
+            })
+        }
+        function xor(msg, pass){
+            let xor = ''
+            for (let i = 0; i < msg.length; i++) {
+                xor += String.fromCharCode(msg.charCodeAt(i) ^ pass.charCodeAt(i % pass.length))
+            }
+            return xor
+        }
+    </script>
+</html>
