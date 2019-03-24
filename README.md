@@ -1,8 +1,9 @@
-# CSAW'18: The Maple Cookie Army github - Eléonore Carpentier & Corentin Thomasset
+# CSAW'18: The Maple Cookie Army github
+# Eléonore Carpentier & Corentin Thomasset
+
+**🏆  EDIT: We did it! We won the European final of the Embedded security Challenge 🏆 **
+
 **Maple Cookie Army for the win !**
-
-🏆  EDIT: We did it! We won the European final of the Embedded security Challenge 🏆 
-
 
 [Winners](https://csaw.engineering.nyu.edu/esc/csaw18-winners)
 
